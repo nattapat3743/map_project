@@ -1,232 +1,119 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'loginpage.dart';
-import 'BookingPage.dart';
-import 'profile_page.dart';
+import 'mrtbook.dart';
 import 'dart:ui';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Mrt extends StatefulWidget {
+  const Mrt({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF1A73E8));
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: {
-        '/profile': (_) => const ProfilePage(),
-      },
-      title: 'Map',
-      theme: ThemeData(useMaterial3: true, colorScheme: scheme),
-      home: const LoginScreen(),
-    );
-  }
+  State<Mrt> createState() => _MrtState();
 }
 
-class RouteHomePage extends StatefulWidget {
-  const RouteHomePage({super.key});
-
-  @override
-  State<RouteHomePage> createState() => _RouteHomePageState();
-}
-
-class _RouteHomePageState extends State<RouteHomePage> {
-  // เลือกสายแยกเป็น "ต้นทาง" และ "ปลายทาง"
+class _MrtState extends State<Mrt> {
+  // ✅ แยกเลือกสายเป็นต้นทาง/ปลายทาง
   String selectedLineStart = 'เลือกสาย';
   String selectedLineEnd = 'เลือกสาย';
 
-  List<String> get allLines => [
-        'เลือกสาย',
-        'สายสุขุมวิท',
-        'สายสีลม',
-        'สายสีทอง',
-        'สายสีชมพู',
-        'สายสีเหลือง',
-      ];
+  List<String> get allLines => ['เลือกสาย', 'สายสีม่วง', 'สายสีน้ำเงิน'];
 
   Color? lineColor(String line) {
     switch (line) {
-      case 'สายสุขุมวิท':
-        return const Color.fromARGB(255, 78, 189, 84);
-      case 'สายสีลม':
-        return const Color.fromARGB(255, 59, 123, 104);
-      case 'สายสีทอง':
-        return const Color.fromARGB(255, 192, 168, 51);
-      case 'สายสีชมพู':
-        return const Color.fromARGB(255, 232, 84, 108);
-      case 'สายสีเหลือง':
-        return const Color.fromARGB(255, 255, 223, 0);
+      case 'สายสีม่วง':
+        return const Color.fromARGB(255, 105, 12, 129);
+      case 'สายสีน้ำเงิน':
+        return const Color.fromARGB(255, 24, 35, 130);
       default:
         return null;
     }
   }
 
-  // dropdown ของสถานีต้นทางจะถูกกรองด้วย selectedLineStart
+  // ✅ dropdown ของสถานีต้นทาง/ปลายทาง กรองตามสายที่เลือก
   List<String> get filteredStationsStart {
     if (selectedLineStart == 'เลือกสาย') return allStations;
-    if (selectedLineStart == 'สายสุขุมวิท') return sukhumvit;
-    if (selectedLineStart == 'สายสีลม') return silom;
-    if (selectedLineStart == 'สายสีทอง') return gold;
-    if (selectedLineStart == 'สายสีชมพู') return pink;
-    if (selectedLineStart == 'สายสีเหลือง') return yellow;
+    if (selectedLineStart == 'สายสีม่วง') return purple;
+    if (selectedLineStart == 'สายสีน้ำเงิน') return blue;
     return allStations;
   }
 
-  // dropdown ของสถานีปลายทางจะถูกกรองด้วย selectedLineEnd
   List<String> get filteredStationsEnd {
     if (selectedLineEnd == 'เลือกสาย') return allStations;
-    if (selectedLineEnd == 'สายสุขุมวิท') return sukhumvit;
-    if (selectedLineEnd == 'สายสีลม') return silom;
-    if (selectedLineEnd == 'สายสีทอง') return gold;
-    if (selectedLineEnd == 'สายสีชมพู') return pink;
-    if (selectedLineEnd == 'สายสีเหลือง') return yellow;
+    if (selectedLineEnd == 'สายสีม่วง') return purple;
+    if (selectedLineEnd == 'สายสีน้ำเงิน') return blue;
     return allStations;
   }
 
-  final List<String> sukhumvit = [
-    'คูคต',
-    'แยก คปอ.',
-    'พิพิธภัณฑ์กองทัพอากาศ',
-    'โรงพยาบาลภูมิพลอดุลยเดช',
-    'สะพานใหม่',
-    'สายหยุด',
-    'พหลโยธิน 59',
-    'วัดพระศรีมหาธาตุ',
-    'กรมทหารารบที่ 11',
-    'บางบัว',
-    'กรมป่าไม้',
-    'มหาวิทยลัยเกษตรศาสตร์',
-    'เสนานิคม',
-    'รัชโยธิน',
-    'พหลโยธิน 24',
-    'ห้าแยกลาดพร้าว',
-    'หมอชิต',
-    'สะพานควาย',
-    'อารีย์',
-    'สนามเป้า',
-    'อนุสาวรีย์ชัยสมรภูมิ',
-    'พญาไท',
-    'ราชเทวี',
-    'สยาม',
-    'ชิดลม',
-    'เพลินจิต',
-    'นานา',
-    'อโศก',
-    'พร้อมพงษ์',
-    'ทองหล่อ',
-    'เอกมัย',
-    'พระโขนง',
-    'อ่อนนุช',
-    'บางจาก',
-    'ปุณณวิถี',
-    'อุดมสุข',
-    'บางนา',
-    'แบริ่ง',
-    'สำโรง',
-    'ปู่เจ้า',
-    'ช้างเอราวัณ',
-    'โรงเรียนนายเรือ',
-    'ปากน้ำ',
-    'ศรีนครินทร์',
-    'แพรกษา',
-    'สายลวด',
-    'เคหะฯ',
+  final List<String> purple = [
+    'เตาปูน', // interchange
+    'บางซ่อน',
+    'วงศ์สว่าง',
+    'แยกติวานนท์',
+    'กระทรวงสาธารณสุข',
+    'ศูนย์ราชการนนทบุรี', // interchange
+    'บางกระสอ',
+    'แยกนนทบุรี 1',
+    'สะพานพระนั่งเกล้า',
+    'ไทรม้า',
+    'บางรักน้อยท่าอิฐ',
+    'บางรักใหญ่',
+    'บางพลู',
+    'สามแยกบางใหญ่',
+    'ตลาดบางใหญ่',
+    'คลองบางไผ่',
   ];
 
-  final List<String> silom = [
-    'บางหว้า',
-    'วุฒากาศ',
-    'ตลาดพลู',
-    'โพธิ์นิมิตร',
-    'วงเวียนใหญ่',
-    'กรุงธนบุรี',
-    'สะพานตากสิน',
-    'สุรศักดิ์',
-    'เซนต์หลุยส์',
-    'ช่องนนทรี',
-    'ศาลาแดง',
-    'ราชดำริ',
-    'สยาม',
-    'สนามกีฬาแห่งชาติ',
-  ];
-
-  final List<String> gold = ['กรุงธนบุรี', 'เจริญนคร', 'คลองสาน'];
-
-  final List<String> pink = [
-    'มีนบุรี',
-    'ตลาดมีนบุรี',
-    'เศรษฐบุตรบำเพ็ญ',
-    'บางชัน',
-    'นพรัตน์',
-    'วงแหวนรามอินทรา',
-    'รามอินทรา กม.9',
-    'คู้บอน',
-    'รามอินทรา กม.6',
-    'วัชรพล',
-    'มัยลาภ',
-    'รามอินทรา กม.4',
-    'ลาดปลาเค้า',
-    'รามอินทรา 3',
-    'วัดพระศรีมหาธาตุ',
-    'ราชภัฏพระนคร',
-    'หลักสี่',
-    'โทรคมนาคมแห่งชาติ',
-    'ศูนย์ราชการเฉลิมพระเกียรติ',
-    'แจ้งวัฒนะ',
-    'เมืองทองธานี',
-    'ศรีรัช',
-    'แจ้งวัฒนะ-ปากเกร็ด 28',
-    'เลี่ยงเมืองปากเกร็ด',
-    'แยกปากเกร็ด',
-    'กรมชลประทาน',
-    'สามัคคี',
-    'สนามบินน้ำ',
-    'แคราย',
-    'ศูนย์ราชการนนทบุรี',
-  ];
-
-  final List<String> yellow = [
-    'ลาดพร้าว',
-    'ภาวนา',
-    'โชคชัย 4',
-    'ลาดพร้าว 71',
-    'ลาดพร้าว 83',
-    'มหาดไทย',
-    'ลาดพร้าว 101',
-    'บางกะปิ',
-    'แยกลำสาลี',
-    'ศรีกรีฑา',
-    'หัวหมาก',
-    'กลันตัน',
-    'ศรีนุช',
-    'ศรีนครินทร์ 38',
-    'สวนหลวง ร.9',
-    'ศรีอุดม',
-    'ศรีเอี่ยม',
-    'ศรีลาซาล',
-    'ศรีแบริ่ง',
-    'ศรีด่าน',
-    'ศรีเทพา',
-    'ทิพวัล',
-    'สำโรง',
+  final List<String> blue = [
+    'หลักสอง',
+    'บางแค',
+    'ภาษีเจริญ',
+    'เพชรเกษม 48',
+    'บางหว้า', // interchange
+    'บางไผ่',
+    'ท่าพระ',
+    'อิสรภาพ',
+    'ท่าเรือราชินี',
+    'สนามไชย',
+    'สามยอด',
+    'วัดมังกร',
+    'หัวลำโพง',
+    'สามย่าน',
+    'สีลม', // interchange
+    'ลุมพินี',
+    'คลองเตย',
+    'ศูนย์การประชุมแห่งชาติสิริกิติ์',
+    'สุขุมวิท', // interchange
+    'เพชรบุรี',
+    'พระราม 9',
+    'ศูนย์วัฒนธรรมแห่งประเทศไทย',
+    'ห้วยขวาง',
+    'สุทธิสาร',
+    'รัชดาภิเษก',
+    'ลาดพร้าว', // interchange
+    'พหลโยธิน', // interchange
+    'สวนจตุจักร',
+    'กำแพงเพชร',
+    'บางซื่อ',
+    'เตาปูน', // interchange
+    'บางโพ',
+    'บางอ้อ',
+    'บางพลัด',
+    'สิรินธร',
+    'บางยี่ขัน',
+    'บางขุนนนท์',
+    'ไฟฉาย',
+    'จรัญสนิทวงศ์ 13',
   ];
 
   late final Map<String, Set<String>> stationLines;
   late final Map<String, List<String>> graph;
 
   final Set<String> interchanges = {
-    'สยาม',
-    'กรุงธนบุรี',
-    'วัดพระศรีมหาธาตุ',
-    'ห้าแยกลาดพร้าว',
-    'สำโรง',
+    'เตาปูน',
+    'ศูนย์ราชการนนทบุรี',
+    'บางหว้า',
+    'สีลม',
+    'สุขุมวิท',
+    'ลาดพร้าว',
+    'พหลโยธิน',
   };
 
   String? start;
@@ -244,7 +131,7 @@ class _RouteHomePageState extends State<RouteHomePage> {
   void initState() {
     super.initState();
 
-    // สร้าง mapping สายของแต่ละสถานี
+    // mapping สายของแต่ละสถานี
     stationLines = {};
     void addLine(List<String> lineStations, String lineName) {
       for (final s in lineStations) {
@@ -253,13 +140,10 @@ class _RouteHomePageState extends State<RouteHomePage> {
       }
     }
 
-    addLine(sukhumvit, 'สายสุขุมวิท');
-    addLine(silom, 'สายสีลม');
-    addLine(gold, 'สายสีทอง');
-    addLine(pink, 'สายสีชมพู');
-    addLine(yellow, 'สายสีเหลือง');
+    addLine(purple, 'สายสีม่วง');
+    addLine(blue, 'สายสีน้ำเงิน');
 
-    // สร้างกราฟเชื่อมต่อ (ต่อกันแบบข้างเคียง)
+    // กราฟเชื่อมต่อ
     graph = {};
     void addEdge(List<String> lineStations) {
       for (int i = 0; i < lineStations.length; i++) {
@@ -276,15 +160,12 @@ class _RouteHomePageState extends State<RouteHomePage> {
       }
     }
 
-    addEdge(sukhumvit);
-    addEdge(silom);
-    addEdge(gold);
-    addEdge(pink);
-    addEdge(yellow);
+    addEdge(purple);
+    addEdge(blue);
   }
 
   List<String> get allStations {
-    final set = <String>{...sukhumvit, ...silom, ...gold, ...pink, ...yellow};
+    final set = <String>{...purple, ...blue};
     final list = set.toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     return list;
   }
@@ -322,18 +203,20 @@ class _RouteHomePageState extends State<RouteHomePage> {
     int price;
     if (stations == 0)
       price = 17;
-    else if (stations >= 1 && stations <= 3)
-      price = 30;
-    else if (stations >= 4 && stations <= 7)
-      price = 40;
-    else if (stations >= 8)
-      price = 47;
+    else if (stations >= 1 && stations <= 2)
+      price = 21;
+    else if (stations >= 3 && stations <= 5)
+      price = 28;
+    else if (stations >= 6 && stations <= 9)
+      price = 37;
+    else if (stations >= 10)
+      price = 42;
     else
       price = 17;
     return price * ticketCount;
   }
 
-  /// ประมาณเวลา: 2.5 นาที/สถานี + 5 นาที/ครั้งที่เปลี่ยนสาย
+  /// 2.5 นาที/สถานี + 5 นาที/ครั้งที่เปลี่ยนสาย
   int estimateMinutes(int stations, int changes) {
     final ride = (stations - 1) * 2.5;
     final transfer = changes * 5.0;
@@ -407,14 +290,16 @@ class _RouteHomePageState extends State<RouteHomePage> {
   void swapStations() {
     if (start == null && end == null) return;
     setState(() {
-      final tmp = start;
+      final tmpS = start;
       start = end;
-      end = tmp;
+      end = tmpS;
 
+      // ✅ สลับสายด้วย
       final tmpLine = selectedLineStart;
       selectedLineStart = selectedLineEnd;
       selectedLineEnd = tmpLine;
 
+      // ถ้าสถานีไม่อยู่ในรายการของสายใหม่ ให้เคลียร์
       if (!filteredStationsStart.contains(start)) start = null;
       if (!filteredStationsEnd.contains(end)) end = null;
     });
@@ -427,10 +312,7 @@ class _RouteHomePageState extends State<RouteHomePage> {
         title: const Text('แจ้งเตือน'),
         content: Text(msg),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('ตกลง'),
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('ตกลง')),
         ],
       ),
     );
@@ -446,19 +328,13 @@ class _RouteHomePageState extends State<RouteHomePage> {
         title: Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
           child: const Text(
-            'BTS',
+            'MRT',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 22,
               letterSpacing: 1.2,
               color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Colors.black54,
-                  blurRadius: 6,
-                  offset: Offset(1, 2),
-                ),
-              ],
+              shadows: [Shadow(color: Colors.black54, blurRadius: 6, offset: Offset(1, 2))],
             ),
           ),
         ),
@@ -466,44 +342,26 @@ class _RouteHomePageState extends State<RouteHomePage> {
           IconButton(
             icon: const Icon(Icons.account_circle, size: 30, color: Colors.white),
             tooltip: 'โปรไฟล์',
-            onPressed: () {
-              Navigator.pushNamed(context, '/profile');
-            },
+            onPressed: () => Navigator.pushNamed(context, '/profile'),
           ),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFFFD700),
-                  Color(0xFFF9E79F),
-                  Color(0xFFFFC300),
-                ],
+                colors: [Color(0xFFFFD700), Color(0xFFF9E79F), Color(0xFFFFC300)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.amber.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: Colors.amber.withOpacity(0.3), blurRadius: 8, offset: Offset(0, 2))],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: IconButton(
-                icon: const Icon(
-                  Icons.confirmation_num,
-                  size: 28,
-                  color: Color.fromARGB(255, 125, 130, 45),
-                ),
+                icon: const Icon(Icons.confirmation_num, size: 28, color: Color.fromARGB(255, 125, 130, 45)),
                 tooltip: 'จองตั๋ว',
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const BookingPage()),
-                  );
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MrtBooking()));
                 },
               ),
             ),
@@ -512,30 +370,19 @@ class _RouteHomePageState extends State<RouteHomePage> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xFF0D47A1),
-                Color.fromARGB(255, 9, 48, 106),
-                Color.fromARGB(255, 5, 25, 54),
-              ],
+              colors: [Color.fromARGB(255, 161, 13, 13), Color.fromARGB(255, 133, 18, 18), Color.fromARGB(255, 71, 11, 11)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
         ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(20))),
       ),
       body: Stack(
         children: [
+          Positioned.fill(child: Image.asset('assets/images/mrtbg.jpg', fit: BoxFit.cover)),
           Positioned.fill(
-            child: Image.asset('assets/images/mrtbg.jpg', fit: BoxFit.cover),
-          ),
-          Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-              child: Container(color: Colors.black.withOpacity(0)),
-            ),
+            child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3), child: Container(color: Colors.black.withOpacity(0))),
           ),
           Center(
             child: ConstrainedBox(
@@ -555,15 +402,16 @@ class _RouteHomePageState extends State<RouteHomePage> {
                           child: Column(
                             children: [
                               Text(
-                                'คำนวณเส้นทางรถไฟฟ้า BTS',
+                                'คำนวณเส้นทางรถไฟฟ้า MRT',
                                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color: const Color.fromARGB(255, 161, 13, 13),
                                     ),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 12),
 
+                              // ✅ เลือกสาย (ต้นทาง)
                               DropdownButtonFormField<String>(
                                 value: selectedLineStart,
                                 isExpanded: true,
@@ -572,26 +420,22 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                   prefixIcon: const Icon(Icons.subway),
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                items: allLines.map((line) {
-                                  return DropdownMenuItem(
-                                    value: line,
-                                    child: Row(
-                                      children: [
-                                        if (line != 'เลือกสาย')
-                                          Container(
-                                            width: 16,
-                                            height: 16,
-                                            margin: const EdgeInsets.only(right: 8),
-                                            decoration: BoxDecoration(
-                                              color: lineColor(line),
-                                              borderRadius: BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                        Text(line),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
+                                items: allLines
+                                    .map((line) => DropdownMenuItem(
+                                          value: line,
+                                          child: Row(children: [
+                                            if (line != 'เลือกสาย')
+                                              Container(
+                                                width: 16,
+                                                height: 16,
+                                                margin: const EdgeInsets.only(right: 8),
+                                                decoration:
+                                                    BoxDecoration(color: lineColor(line), borderRadius: BorderRadius.circular(4)),
+                                              ),
+                                            Text(line),
+                                          ]),
+                                        ))
+                                    .toList(),
                                 onChanged: (v) {
                                   setState(() {
                                     selectedLineStart = v ?? 'เลือกสาย';
@@ -599,7 +443,7 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                   });
                                 },
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 16),
 
                               _StationDropdown(
                                 label: 'สถานีต้นทาง',
@@ -613,9 +457,14 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                 onPressed: swapStations,
                                 icon: const Icon(Icons.compare_arrows),
                                 tooltip: "สลับสถานี",
+                                style: IconButton.styleFrom(
+                                  backgroundColor: const Color.fromARGB(255, 176, 13, 13),
+                                  foregroundColor: Colors.white,
+                                ),
                               ),
                               const SizedBox(height: 12),
 
+                              // ✅ เลือกสาย (ปลายทาง)
                               DropdownButtonFormField<String>(
                                 value: selectedLineEnd,
                                 isExpanded: true,
@@ -624,26 +473,22 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                   prefixIcon: const Icon(Icons.subway_outlined),
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                items: allLines.map((line) {
-                                  return DropdownMenuItem(
-                                    value: line,
-                                    child: Row(
-                                      children: [
-                                        if (line != 'เลือกสาย')
-                                          Container(
-                                            width: 16,
-                                            height: 16,
-                                            margin: const EdgeInsets.only(right: 8),
-                                            decoration: BoxDecoration(
-                                              color: lineColor(line),
-                                              borderRadius: BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                        Text(line),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
+                                items: allLines
+                                    .map((line) => DropdownMenuItem(
+                                          value: line,
+                                          child: Row(children: [
+                                            if (line != 'เลือกสาย')
+                                              Container(
+                                                width: 16,
+                                                height: 16,
+                                                margin: const EdgeInsets.only(right: 8),
+                                                decoration:
+                                                    BoxDecoration(color: lineColor(line), borderRadius: BorderRadius.circular(4)),
+                                              ),
+                                            Text(line),
+                                          ]),
+                                        ))
+                                    .toList(),
                                 onChanged: (v) {
                                   setState(() {
                                     selectedLineEnd = v ?? 'เลือกสาย';
@@ -651,7 +496,7 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                   });
                                 },
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 16),
 
                               _StationDropdown(
                                 label: 'สถานีปลายทาง',
@@ -659,8 +504,8 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                 items: filteredStationsEnd,
                                 onChanged: (v) => setState(() => end = v),
                               ),
+                              const SizedBox(height: 20),
 
-                              const SizedBox(height: 16),
                               TextField(
                                 controller: ticketController,
                                 keyboardType: TextInputType.number,
@@ -685,6 +530,8 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                   icon: const Icon(Icons.route),
                                   label: const Text("คำนวณเส้นทาง"),
                                   style: FilledButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(255, 176, 13, 13),
+                                    foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(vertical: 14),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),
@@ -716,7 +563,6 @@ class _RouteHomePageState extends State<RouteHomePage> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 20),
 
                       IconButton.filled(
@@ -731,13 +577,7 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                 padding: const EdgeInsets.all(18),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(24),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.12),
-                                      blurRadius: 18,
-                                      offset: const Offset(0, 8),
-                                    ),
-                                  ],
+                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 18, offset: Offset(0, 8))],
                                   gradient: const LinearGradient(
                                     colors: [Color(0xFFE3F2FD), Color(0xFFF9E79F), Color(0xFFFFFDE7)],
                                     begin: Alignment.topLeft,
@@ -747,14 +587,8 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Text(
-                                      "แผนที่และเส้นทาง",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                        color: Color(0xFF0D47A1),
-                                      ),
-                                    ),
+                                    const Text("แผนที่และเส้นทาง",
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Color(0xFF0D47A1))),
                                     const SizedBox(height: 16),
                                     SizedBox(
                                       width: 400,
@@ -774,8 +608,8 @@ class _RouteHomePageState extends State<RouteHomePage> {
                                       width: double.infinity,
                                       child: ElevatedButton.icon(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromARGB(255, 255, 0, 0),
-                                          foregroundColor: const Color.fromARGB(221, 255, 255, 255),
+                                          backgroundColor: const Color.fromARGB(255, 176, 13, 13),
+                                          foregroundColor: Colors.white,
                                           elevation: 4,
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -793,6 +627,10 @@ class _RouteHomePageState extends State<RouteHomePage> {
                         },
                         icon: const Icon(Icons.map),
                         tooltip: "ดูแผนที่",
+                        style: IconButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 176, 13, 13),
+                          foregroundColor: Colors.white,
+                        ),
                       ),
 
                       if (path.isNotEmpty) ...[
@@ -803,8 +641,8 @@ class _RouteHomePageState extends State<RouteHomePage> {
                           lineChanges: lineChanges,
                           fare: fare,
                           minutes: minutes,
-                          stationLines: stationLines,
                           ticketCount: ticketCount,
+                          stationLines: stationLines,
                           interchanges: interchanges,
                         ),
                       ],
@@ -841,9 +679,7 @@ class _StationDropdown extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: const Icon(Icons.place),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
       items: items.map((s) => DropdownMenuItem<String>(value: s, child: Text(s))).toList(),
@@ -859,9 +695,9 @@ class _ResultCard extends StatelessWidget {
     required this.lineChanges,
     required this.fare,
     required this.minutes,
+    required this.ticketCount,
     required this.stationLines,
     required this.interchanges,
-    required this.ticketCount,
   });
 
   final List<String> path;
@@ -918,10 +754,7 @@ class _Chip extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: cs.surfaceVariant,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: BoxDecoration(color: cs.surfaceVariant, borderRadius: BorderRadius.circular(12)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -950,52 +783,49 @@ class _PathList extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-      final changeStartIndexToLine = <int, String>{};
+    // index -> ชื่อสายใหม่ ที่ต้องเปลี่ยนไปขึ้นต่อ (mark ที่สถานีเดิมก่อนเปลี่ยน)
+    final changeStartIndexToLine = <int, String>{};
+    String? currentLine;
 
-  String? currentLine;
-
-  String _resolveStepLine(String a, String b, {String? prefer}) {
-    final linesA = stationLines[a] ?? {};
-    final linesB = stationLines[b] ?? {};
-    final common = linesA.intersection(linesB);
-    if (common.isNotEmpty) {
-      if (prefer != null && common.contains(prefer)) return prefer;
-      return common.first;
-    }
-    if (linesB.isNotEmpty) return linesB.first;
-    if (linesA.isNotEmpty) return linesA.first;
-    return '';
-  }
-
-  for (int i = 0; i < path.length - 1; i++) {
-    final a = path[i];
-    final b = path[i + 1];
-    final stepLine = _resolveStepLine(a, b, prefer: currentLine);
-
-    if (currentLine == null) {
-      currentLine = stepLine;
-      continue;
+    String _resolveStepLine(String a, String b, {String? prefer}) {
+      final linesA = stationLines[a] ?? {};
+      final linesB = stationLines[b] ?? {};
+      final common = linesA.intersection(linesB);
+      if (common.isNotEmpty) {
+        if (prefer != null && common.contains(prefer)) return prefer;
+        return common.first;
+      }
+      if (linesB.isNotEmpty) return linesB.first;
+      if (linesA.isNotEmpty) return linesA.first;
+      return '';
     }
 
-    if (stepLine != currentLine) {
-      changeStartIndexToLine[i] = stepLine.isEmpty ? '-' : stepLine;
-      currentLine = stepLine;
+    for (int i = 0; i < path.length - 1; i++) {
+      final a = path[i];
+      final b = path[i + 1];
+      final stepLine = _resolveStepLine(a, b, prefer: currentLine);
+
+      if (currentLine == null) {
+        currentLine = stepLine; // ตั้งสายเริ่มต้น
+        continue;
+      }
+      if (stepLine != currentLine) {
+        // เปลี่ยนสายเกิดขึ้นที่สถานี a (index i)
+        changeStartIndexToLine[i] = stepLine.isEmpty ? '-' : stepLine;
+        currentLine = stepLine;
+      }
     }
-  }
 
     return Column(
       children: List.generate(path.length, (i) {
         final s = path[i];
         final lines = stationLines[s]?.join(' / ') ?? '-';
         final isChangeStart = changeStartIndexToLine.containsKey(i);
-        // ignore: unused_local_variable
-        final isInterchange = interchanges.contains(s);
 
         return ListTile(
           leading: CircleAvatar(
             radius: 14,
-            backgroundColor:
-                isChangeStart ? cs.primary : cs.secondaryContainer,
+            backgroundColor: isChangeStart ? cs.primary : cs.secondaryContainer,
             child: Text(
               '${i + 1}',
               style: TextStyle(
@@ -1013,7 +843,7 @@ class _PathList extends StatelessWidget {
                     const Icon(Icons.change_circle, size: 18),
                     const SizedBox(width: 6),
                     Text(
-                      'จุดเปลี่ยนสาย\n(เริ่มใช้: ${changeStartIndexToLine[i]})',
+                      'จุดเปลี่ยนสาย\n(ไปขึ้น: ${changeStartIndexToLine[i]})',
                       style: const TextStyle(fontSize: 12),
                     ),
                   ],

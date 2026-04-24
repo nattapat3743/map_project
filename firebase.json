@@ -1,0 +1,25 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "mapprofect-55188",
+                    "appId": "1:322473331510:android:e338e1e7b39ddb2ce24197",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "mapprofect-55188",
+                    "configurations": {
+                        "android": "1:322473331510:android:e338e1e7b39ddb2ce24197",
+                        "ios": "1:322473331510:ios:913a4247e976033be24197",
+                        "macos": "1:322473331510:ios:913a4247e976033be24197",
+                        "web": "1:322473331510:web:7a291b7d74301bf8e24197",
+                        "windows": "1:322473331510:web:a3b4ecfeeeb747dfe24197"
+                    }
+                }
+            }
+        }
+    }
+}
